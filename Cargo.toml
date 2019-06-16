@@ -11,6 +11,11 @@ categories = ["cryptography", "no-std"]
 description = "Schnorr VRF, signatures, etc. using the Ristretto group"
 exclude = [ ".gitignore", "TESTVECTORS", "res/*" ]
 
+#[lib]
+#name = "schnorrkel"
+#crate-type = ["cdylib", "staticlib"]
+
+
 # [badges]
 # travis-ci = { repository = "dalek-cryptography/ed25519-dalek", branch = "master"}
 
@@ -68,7 +73,8 @@ name = "schnorr_benchmarks"
 harness = false
 
 [features]
-default = ["std", "u64_backend"]
+#default = ["std", "u64_backend"]
+default = ["std", "u32_backend"]
 std = ["curve25519-dalek/std", "rand/std"]
 alloc = ["curve25519-dalek/alloc"]
 nightly = ["curve25519-dalek/nightly", "rand/nightly", "clear_on_drop/nightly"]

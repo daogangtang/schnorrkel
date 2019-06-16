@@ -306,9 +306,36 @@ pub mod errors;
 pub mod musig;
 
 pub use crate::keys::*; // {MiniSecretKey,SecretKey,PublicKey,Keypair}; + *_LENGTH
-pub use crate::context::{signing_context}; // SigningContext,SigningTranscript
-pub use crate::sign::{Signature,SIGNATURE_LENGTH};
+pub use crate::context::{signing_context, SimpleTranscript}; // SigningContext,SigningTranscript
+pub use crate::sign::{Signature,SIGNATURE_LENGTH, CompressedRistretto};
 pub use crate::errors::{SignatureError,SignatureResult};
 
 #[cfg(any(feature = "alloc", feature = "std"))]
 pub use crate::sign::{verify_batch};
+
+
+use rand::rngs::EntropyRng;
+
+/*
+#[no_mangle]
+pub extern "C" fn generate_keypair_default() -> *const Keypair {
+    let mut csprng = EntropyRng::new();
+    let kp = Keypair::generate(&mut csprng);
+
+    Box::into_raw(Box::new(kp))
+}
+
+#[no_mangle]
+pub extern "C" fn generate_keypair(csprng: &mut EntropyRng) -> *const Keypair {
+    let kp = Keypair::generate(csprng);
+
+    Box::into_raw(Box::new(kp))
+}
+
+#[no_mangle]
+pub extern "C" fn calc_r(kp: *mut Keypair, ctx_str: &str t: &str) -> *const CompressedRistretto {
+    let ctx = signing_context(ctx_str.as_bytes());
+
+    kp.calc_r(ctx.bytes(t.as_bytes()))
+}
+*/

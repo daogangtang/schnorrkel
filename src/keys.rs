@@ -658,6 +658,7 @@ serde_boilerplate!(PublicKey);
 
 
 /// A Ristretto Schnorr keypair.
+#[repr(C)]
 #[derive(Debug, Default)] // we derive Default in order to use the clear() method in Drop
 pub struct Keypair {
     /// The secret half of this keypair.

@@ -15,7 +15,7 @@ use core::fmt::{Debug};
 use rand::prelude::*;  // {RngCore,thread_rng};
 
 use curve25519_dalek::constants;
-use curve25519_dalek::ristretto::{CompressedRistretto,RistrettoPoint};
+pub use curve25519_dalek::ristretto::{CompressedRistretto,RistrettoPoint};
 use curve25519_dalek::scalar::Scalar;
 
 use super::*;
@@ -170,6 +170,18 @@ impl SecretKey {
         ::clear_on_drop::clear::Clear::clear(&mut r);
 
         Signature{ R, s }
+    }
+
+    /// Calculate R 
+    pub fn calc_r<T: SigningTranscript>(&self, mut t: T, public_key: &PublicKey) -> CompressedRistretto
+    {
+        t.proto_name(b"Schnorr-sig");
+        t.commit_point(b"pk",public_key.as_compressed());
+
+        let r = t.witness_scalar(&[&self.nonce]);  // context, message, A/public_key
+        let out_r = (&r * &constants::RISTRETTO_BASEPOINT_TABLE).compress();
+
+        out_r
     }
 
     /// Sign a message with this `SecretKey`.
@@ -417,6 +429,12 @@ impl Keypair {
     pub fn sign<T: SigningTranscript>(&self, t: T) -> Signature
     {
         self.secret.sign(t, &self.public)
+    }
+
+    /// calc big R
+    pub fn calc_r<T: SigningTranscript>(&self, t: T) -> CompressedRistretto
+    {
+        self.secret.calc_r(t, &self.public)
     }
 
     /// Sign a message with this keypair's secret key.
