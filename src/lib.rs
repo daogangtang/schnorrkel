@@ -315,9 +315,10 @@ pub use crate::sign::{verify_batch};
 
 
 use rand::rngs::EntropyRng;
+use std::boxed::Box;
 
-/*
 #[no_mangle]
+/// exported
 pub extern "C" fn generate_keypair_default() -> *const Keypair {
     let mut csprng = EntropyRng::new();
     let kp = Keypair::generate(&mut csprng);
@@ -326,6 +327,7 @@ pub extern "C" fn generate_keypair_default() -> *const Keypair {
 }
 
 #[no_mangle]
+/// exported
 pub extern "C" fn generate_keypair(csprng: &mut EntropyRng) -> *const Keypair {
     let kp = Keypair::generate(csprng);
 
@@ -333,9 +335,10 @@ pub extern "C" fn generate_keypair(csprng: &mut EntropyRng) -> *const Keypair {
 }
 
 #[no_mangle]
-pub extern "C" fn calc_r(kp: *mut Keypair, ctx_str: &str t: &str) -> *const CompressedRistretto {
+/// exported
+pub extern "C" fn calc_r(kp: &mut Keypair, ctx_str: &'static str, t: &'static str) -> *mut CompressedRistretto {
     let ctx = signing_context(ctx_str.as_bytes());
 
-    kp.calc_r(ctx.bytes(t.as_bytes()))
+    Box::into_raw(Box::new(kp.calc_r(ctx.bytes(t.as_bytes()))))
 }
-*/
+
